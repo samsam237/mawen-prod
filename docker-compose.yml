@@ -17,6 +17,7 @@ services:
       - MINIO_SECRET_KEY=minioadmin
       - MINIO_BUCKET=mawenhouse
       - MINIO_SECURE=0
+      - MINIO_REGION=us-east-1
       - REDIS_URL=redis://mawen-redis:6379/0
     depends_on:
       - mawen-redis
