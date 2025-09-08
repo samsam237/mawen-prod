@@ -1,5 +1,9 @@
 version: '3.8'
 
+networks:
+  mawen-network:
+    driver: bridge
+
 services:
   mawen-web:
     build: .
@@ -8,15 +12,17 @@ services:
     environment:
       - FLASK_ENV=production
       - STORAGE_BACKEND=minio
-      - MINIO_ENDPOINT=minio:9000
+      - MINIO_ENDPOINT=mawen-minio:9000
       - MINIO_ACCESS_KEY=minioadmin
       - MINIO_SECRET_KEY=minioadmin
       - MINIO_BUCKET=mawenhouse
       - MINIO_SECURE=0
-      - REDIS_URL=redis://redis:6379/0
+      - REDIS_URL=redis://mawen-redis:6379/0
     depends_on:
       - mawen-redis
       - mawen-minio
+    networks:
+      - mawen-network
     restart: unless-stopped
 
   mawen-redis:
@@ -28,6 +34,8 @@ services:
       - "6379:6379"
     volumes:
       - mawen-redis-data:/data
+    networks:
+      - mawen-network
     restart: unless-stopped
 
   mawen-minio:
@@ -41,6 +49,8 @@ services:
       - "9003:9001"
     volumes:
       - mawen-minio-data:/data
+    networks:
+      - mawen-network
     restart: unless-stopped
 
 volumes:
