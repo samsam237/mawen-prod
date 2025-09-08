@@ -1,0 +1,110 @@
+
+/********************************HERO********************************/
+.hero {
+    display: flex; flex-direction: row;
+    width: 100%;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    justify-content: space-between;
+    margin-top: 1rem;
+}
+.hero * {
+    width: 100%;
+}
+
+/* .hero .btn {
+    border-radius: 10px;
+    background-color: #FFD700;
+    padding: 0.6rem;
+    transition: background-color 0.3s ease;
+    margin: 1rem;
+}
+
+.hero .btn:hover {
+    background-color: #555;
+    border-radius: 5px;
+}
+
+.hero-element{
+    flex: 1;
+} */
+/* .hero-element:first-of-type{
+    border-right: 1px solid #FFD700;
+} */
+
+/* .hero-title {
+    font-size: 2rem;
+    margin-bottom: 1rem;
+    font-weight: bold;
+}
+.hero-title span {
+    color : #FFD700
+}
+
+
+.hero .hero-text {
+    font-size: 1.2rem;
+    margin-bottom: 2rem;
+}
+
+.hero-image{
+    max-width: 80%;
+    border-radius: 25px;
+} */
+
+@media screen and (max-width: 800px) {
+    .hero{
+        flex-direction: column;
+    }
+    /* .hero-image{
+        max-width: 100%;
+    }
+    .hero-element:first-of-type{
+        border-right: 1px solid transparent;
+    } */
+}
+/********************************HERO********************************/
+
+
+/********************************SERVICES********************************/
+.service-container{
+    display: flex;
+    flex-direction: column;
+}
+.service-container-title .service-title{
+    border-bottom: #FFD700 2px solid;
+    width: 5.5rem;
+}
+
+.service-container-title{
+    margin-left: 4rem;
+}
+
+.service-elements{
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-around; align-items: center;
+    margin-top: 4rem;
+    margin-bottom: 4rem;
+}
+
+@media screen and (min-width: 450px) {
+    service-element{
+        flex: 1;
+        width: 30%;
+        max-width: 150px;
+    }
+}
+@media screen and (max-width: 400px) {
+    .service-elements{
+        flex-direction: column;
+    }
+}
+/********************************SERVICES********************************/
+/********************************SHOP********************************/
+.shop-container, .resto-container{
+    padding: 0; margin: 0;
+}
+
+/********************************SHOP********************************/

@@ -1,0 +1,36 @@
+<header>
+  <nav>
+    <div class="headerNav">
+      <div class="logo">
+        <img src="{{ url_for('static', filename='image/logo.svg') }}"></img>
+      </div>
+  
+      <div class="burger-menu">
+        <i class="fas fa-bars"></i>
+      </div>
+  
+      <div class="headerNav1">
+        <a href="/" class="header-link">Acceuil</a>
+        <a href="{{ url_for('boisson.index') }}"  class="header-link"> Boisson </a>
+        <a href="{{ url_for('menu.index') }}" class="header-link"> Menu </a>
+        <a href="{{ url_for('shop.index') }}"  class="header-link"> Shop </a>
+        <a href="#footer"  class="header-link"> Contact </a>
+        <a href="{{ url_for('admin.login') }}"  class="header-link admin-link">
+          <i class="fas fa-user-shield"></i> Admin
+        </a>
+      </div>
+
+    </div>
+
+    <div class="headerNav headerNav2">
+      <a href="/" class="header-link">Acceuil</a>
+      <a href="{{ url_for('boisson.index') }}"  class="header-link"> Boisson </a>
+      <a href="{{ url_for('menu.index') }}" class="header-link"> Menu </a>
+      <a href="{{ url_for('shop.index') }}"  class="header-link"> Shop </a>
+      <a href="{{ url_for('contact.index') }}"  class="header-link"> Contact </a>
+      <a href="{{ url_for('admin.login') }}"  class="header-link admin-link">
+        <i class="fas fa-user-shield"></i> Admin
+      </a>
+    </div>
+  </nav>
+</header>

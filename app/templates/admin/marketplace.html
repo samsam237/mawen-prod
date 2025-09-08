@@ -1,0 +1,413 @@
+{% extends "admin/base.html" %}
+
+{% block title %}{{ config.name }} - Administration MAWEN HOUSE{% endblock %}
+
+{% block content %}
+<div class="marketplace-container">
+    <!-- En-tête de la marketplace -->
+    <div class="marketplace-header">
+        <div class="header-content">
+            <h1 class="marketplace-title">
+                {% if marketplace == 'menu' %}
+                    <i class="fas fa-utensils"></i>
+                {% elif marketplace == 'boisson' %}
+                    <i class="fas fa-glass-martini"></i>
+                {% elif marketplace == 'shop' %}
+                    <i class="fas fa-shopping-bag"></i>
+                {% endif %}
+                {{ config.name }}
+            </h1>
+            <p class="marketplace-subtitle">Gestion des éléments ({{ items|length }} total)</p>
+        </div>
+        
+        <div class="header-actions">
+            <button class="btn btn-primary" onclick="openAddModal()">
+                <i class="fas fa-plus"></i>
+                Ajouter un élément
+            </button>
+        </div>
+    </div>
+
+    <!-- Filtres et recherche -->
+    <div class="filters-section">
+        <div class="row">
+            <div class="col-md-4">
+                <div class="form-group">
+                    <label for="searchInput" class="form-label">
+                        <i class="fas fa-search"></i> Rechercher
+                    </label>
+                    <input type="text" 
+                           class="form-control" 
+                           id="searchInput" 
+                           placeholder="Rechercher par nom...">
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="form-group">
+                    <label for="categoryFilter" class="form-label">
+                        <i class="fas fa-filter"></i> Catégorie
+                    </label>
+                    <select class="form-select" id="categoryFilter">
+                        <option value="">Toutes les catégories</option>
+                        {% if marketplace == 'boisson' %}
+                            <option value="Bière">Bière</option>
+                            <option value="Champagne">Champagne</option>
+                            <option value="Coktail">Coktail</option>
+                            <option value="Jus Gazeux">Jus Gazeux</option>
+                            <option value="Jus Naturel">Jus Naturel</option>
+                            <option value="Smoothies">Smoothies</option>
+                            <option value="Vin">Vin</option>
+                            <option value="Whisky">Whisky</option>
+                        {% elif marketplace == 'menu' %}
+                            <option value="Burger">Burger</option>
+                            <option value="P'tit déjeuner">P'tit déjeuner</option>
+                            <option value="Poisson">Poisson</option>
+                            <option value="Poulets">Poulets</option>
+                            <option value="Viande">Viande</option>
+                        {% elif marketplace == 'shop' %}
+                            <option value="accessoires">Accessoires</option>
+                            <option value="chaussure">Chaussure</option>
+                            <option value="Robe de mariage">Robe de mariage</option>
+                            <option value="Robe de soirée">Robe de soirée</option>
+                            <option value="tenue de ville">Tenue de ville</option>
+                        {% endif %}
+                    </select>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="form-group">
+                    <label for="statusFilter" class="form-label">
+                        <i class="fas fa-toggle-on"></i> Statut
+                    </label>
+                    <select class="form-select" id="statusFilter">
+                        <option value="">Tous les statuts</option>
+                        <option value="true">Disponible</option>
+                        <option value="false">Indisponible</option>
+                    </select>
+                </div>
+            </div>
+            <div class="col-md-2">
+                <div class="form-group">
+                    <label class="form-label">&nbsp;</label>
+                    <button class="btn btn-secondary w-100" onclick="resetFilters()">
+                        <i class="fas fa-undo"></i> Réinitialiser
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Liste des éléments -->
+    <div class="items-container">
+        <div class="items-grid" id="itemsGrid">
+            {% for item in items %}
+            <div class="item-card" data-item="{{ item|tojson }}">
+                <div class="item-image">
+                    <img src="{{ item.image or '/static/image/food.svg' }}" 
+                         alt="{{ item.nom }}" 
+                         onerror="this.src='/static/image/food.svg'">
+                    <div class="item-status {{ 'available' if item.disponible else 'unavailable' }}">
+                        {% if item.disponible %}
+                            <i class="fas fa-check-circle"></i> Disponible
+                        {% else %}
+                            <i class="fas fa-times-circle"></i> Indisponible
+                        {% endif %}
+                    </div>
+                </div>
+                
+                <div class="item-content">
+                    <h3 class="item-title">{{ item.nom if item.nom else 'Sans nom' }}</h3>
+                    <p class="item-description">
+                        {% if item.description %}
+                            {{ item.description[:100] }}{% if item.description|length > 100 %}...{% endif %}
+                        {% else %}
+                            Aucune description disponible
+                        {% endif %}
+                    </p>
+                    
+                    <div class="item-details">
+                        <span class="item-price">{{ item.prix if item.prix else 'Prix non défini' }}</span>
+                        {% if item.categorie %}
+                            <span class="item-category">{{ item.categorie }}</span>
+                        {% endif %}
+                    </div>
+                </div>
+                
+                <div class="item-actions">
+                    <button class="btn btn-sm btn-outline-primary" onclick="editItem('{{ item.id }}')">
+                        <i class="fas fa-edit"></i>
+                    </button>
+                    <button class="btn btn-sm btn-outline-warning" onclick="toggleAvailability('{{ item.id }}')">
+                        <i class="fas fa-toggle-on"></i>
+                    </button>
+                    <button class="btn btn-sm btn-outline-danger" onclick="deleteItem('{{ item.id }}')">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        
+        {% if not items %}
+        <div class="empty-state">
+            <i class="fas fa-inbox"></i>
+            <h3>Aucun élément trouvé</h3>
+            <p>Commencez par ajouter votre premier élément.</p>
+            <button class="btn btn-primary" onclick="openAddModal()">
+                <i class="fas fa-plus"></i> Ajouter un élément
+            </button>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<!-- Modal d'ajout/édition -->
+<div class="modal fade" id="itemModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalTitle">Ajouter un élément</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form id="itemForm" enctype="multipart/form-data">
+                    <div class="row">
+                        <div class="col-md-8">
+                            <div class="form-group mb-3">
+                                <label for="itemName" class="form-label">Nom *</label>
+                                <input type="text" class="form-control" id="itemName" name="nom" required>
+                            </div>
+                            
+                            <div class="form-group mb-3">
+                                <label for="itemDescription" class="form-label">Description</label>
+                                <textarea class="form-control" id="itemDescription" name="description" rows="3"></textarea>
+                            </div>
+                            
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group mb-3">
+                                        <label for="itemPrice" class="form-label">Prix *</label>
+                                        <input type="text" class="form-control" id="itemPrice" name="prix" required>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group mb-3">
+                                        <label for="itemCategory" class="form-label">Catégorie</label>
+                                        <select class="form-select" id="itemCategory" name="categorie">
+                                            <option value="">Sélectionner une catégorie</option>
+                                            {% if marketplace == 'boisson' %}
+                                                <option value="Bière">Bière</option>
+                                                <option value="Champagne">Champagne</option>
+                                                <option value="Coktail">Coktail</option>
+                                                <option value="Jus Gazeux">Jus Gazeux</option>
+                                                <option value="Jus Naturel">Jus Naturel</option>
+                                                <option value="Smoothies">Smoothies</option>
+                                                <option value="Vin">Vin</option>
+                                                <option value="Whisky">Whisky</option>
+                                            {% elif marketplace == 'menu' %}
+                                                <option value="Burger">Burger</option>
+                                                <option value="P'tit déjeuner">P'tit déjeuner</option>
+                                                <option value="Poisson">Poisson</option>
+                                                <option value="Poulets">Poulets</option>
+                                                <option value="Viande">Viande</option>
+                                            {% elif marketplace == 'shop' %}
+                                                <option value="accessoires">Accessoires</option>
+                                                <option value="chaussure">Chaussure</option>
+                                                <option value="Robe de mariage">Robe de mariage</option>
+                                                <option value="Robe de soirée">Robe de soirée</option>
+                                                <option value="tenue de ville">Tenue de ville</option>
+                                            {% endif %}
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="form-group mb-3">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="itemAvailable" name="disponible" checked>
+                                    <label class="form-check-label" for="itemAvailable">
+                                        Disponible
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-4">
+                            <div class="form-group mb-3">
+                                <label for="itemImage" class="form-label">Image</label>
+                                <div class="image-upload-container">
+                                    <img id="imagePreview" src="/static/image/food.svg" alt="Aperçu">
+                                    <input type="file" class="form-control" id="itemImage" name="image" accept="image/*">
+                                    <button type="button" class="btn btn-outline-secondary btn-sm" onclick="document.getElementById('itemImage').click()">
+                                        <i class="fas fa-upload"></i> Choisir une image
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                <button type="button" class="btn btn-primary" onclick="saveItem()">
+                    <i class="fas fa-save"></i> Enregistrer
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal de confirmation de suppression -->
+<div class="modal fade" id="deleteModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Confirmer la suppression</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <p>Êtes-vous sûr de vouloir supprimer cet élément ?</p>
+                <p class="text-muted">Cette action est irréversible.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                <button type="button" class="btn btn-danger" onclick="confirmDelete()">
+                    <i class="fas fa-trash"></i> Supprimer
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Données des éléments pour ce template
+    let itemsData = {{ items|tojson }};
+    
+    // Initialisation spécifique à ce template
+    document.addEventListener('DOMContentLoaded', function() {
+        // Gestion de l'upload d'image
+        const imageInput = document.getElementById('itemImage');
+        if (imageInput) {
+            imageInput.addEventListener('change', function(e) {
+                const file = e.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        const preview = document.getElementById('imagePreview');
+                        if (preview) {
+                            preview.src = e.target.result;
+                        }
+                    };
+                    reader.readAsDataURL(file);
+                }
+            });
+        }
+
+        // Filtres
+        const searchInput = document.getElementById('searchInput');
+        const categoryFilter = document.getElementById('categoryFilter');
+        const statusFilter = document.getElementById('statusFilter');
+        
+        if (searchInput) searchInput.addEventListener('input', filterItems);
+        if (categoryFilter) categoryFilter.addEventListener('change', filterItems);
+        if (statusFilter) statusFilter.addEventListener('change', filterItems);
+    });
+
+    // Fonctions de filtrage
+    function filterItems() {
+        const searchTerm = document.getElementById('searchInput')?.value.toLowerCase() || '';
+        const categoryFilter = document.getElementById('categoryFilter')?.value || '';
+        const statusFilter = document.getElementById('statusFilter')?.value || '';
+        
+        const items = document.querySelectorAll('.item-card');
+        let visibleCount = 0;
+        
+        items.forEach(item => {
+            const itemData = JSON.parse(item.dataset.item || '{}');
+            const matchesSearch = !searchTerm || (itemData.nom && itemData.nom.toLowerCase().includes(searchTerm));
+            const matchesCategory = !categoryFilter || itemData.categorie === categoryFilter;
+            const matchesStatus = !statusFilter || itemData.disponible.toString() === statusFilter;
+            
+            if (matchesSearch && matchesCategory && matchesStatus) {
+                item.style.display = 'block';
+                visibleCount++;
+            } else {
+                item.style.display = 'none';
+            }
+        });
+        
+        // Afficher un message si aucun résultat
+        const emptyState = document.querySelector('.empty-state');
+        if (emptyState) {
+            if (visibleCount === 0 && (searchTerm || categoryFilter || statusFilter)) {
+                emptyState.style.display = 'block';
+                emptyState.innerHTML = `
+                    <i class="fas fa-search"></i>
+                    <h3>Aucun résultat trouvé</h3>
+                    <p>Aucun élément ne correspond à vos critères de recherche.</p>
+                    <button class="btn btn-secondary" onclick="resetFilters()">
+                        <i class="fas fa-undo"></i> Réinitialiser les filtres
+                    </button>
+                `;
+            } else {
+                emptyState.style.display = 'none';
+            }
+        }
+    }
+
+    function resetFilters() {
+        const searchInput = document.getElementById('searchInput');
+        const categoryFilter = document.getElementById('categoryFilter');
+        const statusFilter = document.getElementById('statusFilter');
+        
+        if (searchInput) searchInput.value = '';
+        if (categoryFilter) categoryFilter.value = '';
+        if (statusFilter) statusFilter.value = '';
+        
+        filterItems();
+    }
+
+    // Fonction pour éditer un élément (utilise les fonctions de admin.js)
+    function editItem(itemId) {
+        if (window.adminInterface) {
+            window.adminInterface.openEditModal(itemId);
+        } else {
+            console.error('Interface admin non initialisée');
+            alert('Erreur: Interface admin non disponible');
+        }
+    }
+
+    // Fonction pour supprimer un élément
+    function deleteItem(itemId) {
+        if (window.adminInterface) {
+            window.adminInterface.currentItemId = itemId;
+            new bootstrap.Modal(document.getElementById('deleteModal')).show();
+        } else {
+            console.error('Interface admin non initialisée');
+            alert('Erreur: Interface admin non disponible');
+        }
+    }
+
+    // Fonction pour basculer la disponibilité
+    function toggleAvailability(itemId) {
+        if (window.adminInterface) {
+            window.adminInterface.toggleAvailability('{{ marketplace }}', itemId);
+        } else {
+            console.error('Interface admin non initialisée');
+            alert('Erreur: Interface admin non disponible');
+        }
+    }
+
+    // Fonction pour confirmer la suppression
+    function confirmDelete() {
+        if (window.adminInterface) {
+            window.adminInterface.confirmDelete(window.adminInterface.currentItemId);
+        } else {
+            console.error('Interface admin non initialisée');
+            alert('Erreur: Interface admin non disponible');
+        }
+    }
+</script>
+{% endblock %} 

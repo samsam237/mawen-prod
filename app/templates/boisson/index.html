@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+
+{% block stylesList %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/acceuil.css') }}">
+{% endblock %}
+
+{% block content %}
+    {% include 'components/boisson/boisson.html' %}
+{% endblock %}
+
+{% block scriptsList %}
+    <script src="{{ url_for('static', filename='js/webcomponent/pageMenu.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/webcomponent/navMenu.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/webcomponent/menuElement.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/webcomponent/detailProduit.js') }}"></script>
+{% endblock %}

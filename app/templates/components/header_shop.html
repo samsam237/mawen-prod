@@ -1,0 +1,30 @@
+<header>
+  <nav>
+    <div class="shop-nav">
+      <div class="logo">
+          <img src="{{ url_for('static', filename='image/logo.svg') }}"></img>
+      </div>
+    
+      <div class="container mt-5 search-container">
+        <div class="input-group search align-items-center">
+            <input type="text" class="form-control" placeholder="Search..." aria-label="Search">
+            <div class="input-group-append">
+              <span class="input-group-text"><i class="fas fa-magnifying-glass"></i></span>
+            </div>
+        </div>
+      </div>
+    
+      <div class="home" onclick="window.location.href='/'">
+        <i class="fa-solid fa-house"></i>
+        <div>home</div>
+      </div>
+    </div>
+
+    <!--<shop-header-list-category
+      data="Robe soirée, Robe droite, Robe sirène, Robe bustier, Robe princesse, Robe bouffante, Robe à traine, Robe deux pièces"
+    ></shop-header-list-category>-->
+    <shop-header-list-category
+      data="accessoires, chaussure, Robe de mariage, Robe de soirée, tenue de ville"
+    ></shop-header-list-category>
+  </nav>
+</header>

@@ -1,0 +1,134 @@
+{% extends "admin/base.html" %}
+
+{% block title %}Tableau de bord - Administration MAWEN HOUSE{% endblock %}
+
+{% block content %}
+<div class="dashboard-container">
+    <!-- En-tête du tableau de bord -->
+    <div class="dashboard-header">
+        <h1 class="dashboard-title">
+            <i class="fas fa-tachometer-alt"></i>
+            Tableau de bord
+        </h1>
+        <p class="dashboard-subtitle">Vue d'ensemble de vos marketplaces</p>
+    </div>
+
+    <!-- Statistiques générales -->
+    <div class="stats-grid">
+        {% for key, stat in stats.items() %}
+        <div class="stat-card">
+            <div class="stat-icon">
+                {% if key == 'menu' %}
+                    <i class="fas fa-utensils"></i>
+                {% elif key == 'boisson' %}
+                    <i class="fas fa-glass-martini"></i>
+                {% elif key == 'shop' %}
+                    <i class="fas fa-shopping-bag"></i>
+                {% endif %}
+            </div>
+            <div class="stat-content">
+                <h3 class="stat-title">{{ stat.name }}</h3>
+                <div class="stat-numbers">
+                    <div class="stat-item">
+                        <span class="stat-value">{{ stat.total }}</span>
+                        <span class="stat-label">Total</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-value available">{{ stat.disponible }}</span>
+                        <span class="stat-label">Disponible</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-value unavailable">{{ stat.indisponible }}</span>
+                        <span class="stat-label">Indisponible</span>
+                    </div>
+                </div>
+            </div>
+            <div class="stat-actions">
+                <a href="{{ url_for('admin.marketplace', marketplace=key) }}" class="btn btn-primary btn-sm">
+                    <i class="fas fa-edit"></i> Gérer
+                </a>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <!-- Actions rapides -->
+    <div class="quick-actions">
+        <h2 class="section-title">
+            <i class="fas fa-bolt"></i>
+            Actions rapides
+        </h2>
+        
+        <div class="actions-grid">
+            <div class="action-card">
+                <div class="action-icon">
+                    <i class="fas fa-plus"></i>
+                </div>
+                <h3>Ajouter un plat</h3>
+                <p>Créer un nouveau plat dans le menu</p>
+                <a href="{{ url_for('admin.marketplace', marketplace='menu') }}" class="btn btn-primary">
+                    Ajouter
+                </a>
+            </div>
+
+            <div class="action-card">
+                <div class="action-icon">
+                    <i class="fas fa-plus"></i>
+                </div>
+                <h3>Ajouter une boisson</h3>
+                <p>Créer une nouvelle boisson</p>
+                <a href="{{ url_for('admin.marketplace', marketplace='boisson') }}" class="btn btn-primary">
+                    Ajouter
+                </a>
+            </div>
+
+            <div class="action-card">
+                <div class="action-icon">
+                    <i class="fas fa-plus"></i>
+                </div>
+                <h3>Ajouter un produit</h3>
+                <p>Créer un nouveau produit boutique</p>
+                <a href="{{ url_for('admin.marketplace', marketplace='shop') }}" class="btn btn-primary">
+                    Ajouter
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Dernières activités -->
+    <div class="recent-activity">
+        <h2 class="section-title">
+            <i class="fas fa-history"></i>
+            Activité récente
+        </h2>
+        
+        <div class="activity-list">
+            <div class="activity-item">
+                <div class="activity-icon">
+                    <i class="fas fa-user"></i>
+                </div>
+                <div class="activity-content">
+                    <p>Connexion administrateur</p>
+                    <small>{{ session.get('admin_email', 'Admin') }}</small>
+                </div>
+                <div class="activity-time">
+                    <small>Maintenant</small>
+                </div>
+            </div>
+            
+            <div class="activity-item">
+                <div class="activity-icon">
+                    <i class="fas fa-info-circle"></i>
+                </div>
+                <div class="activity-content">
+                    <p>Tableau de bord chargé</p>
+                    <small>Vue d'ensemble des marketplaces</small>
+                </div>
+                <div class="activity-time">
+                    <small>Maintenant</small>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

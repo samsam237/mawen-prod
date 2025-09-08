@@ -1,0 +1,23 @@
+<div class="service-container">
+    <!--<div class="service-container-title">
+        <h1 class="service-title">
+            Boisson
+        </h1>
+
+        <p class="service-description">
+            Disponible à la carte.
+        </p>
+        data="https://drive.google.com/file/d/1QEgKOJfczx2TClFud4s1RswyoovH7CwQ/view?usp=drive_link"
+        data_='{"Jus Gazeux":[{"nom":"example", "prix":"12 XAF", "image":"{{ url_for('static', filename='image/cafe.svg') }}"}, {"nom":"example", "prix":"12 XAF", "image":"images/"}]}'
+    </div>
+
+    <div class="service-elements">
+        
+    </div>-->
+    <page-menu
+        nom="Boisson"
+        desc="Disponible à la carte."  
+        categories="Bière, Champagne, Cocktail, Jus Gazeux, Jus Naturel, Smoothies, Vin, Whisky"
+        data={{data|tojson}}
+    ></page-menu>
+</div>

@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+
+{% block stylesList %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/acceuil.css') }}">
+{% endblock %}
+
+{% block hero %}
+    {% include 'components/acceuil/hero.html' %}
+{% endblock %}
+
+{% block content %}
+    {% include 'components/acceuil/services.html' %}
+    {% include 'components/acceuil/resto.html' %}
+    {% include 'components/acceuil/shop.html' %}
+{% endblock %}
+
+{% block scriptsList %}
+    <script src="{{ url_for('static', filename='js/webcomponent/serviceElement.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/webcomponent/restoElement.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/webcomponent/shopService.js') }}"></script>
+{% endblock %}

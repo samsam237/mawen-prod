@@ -1,0 +1,7 @@
+{% extends 'base_shop.html' %}
+
+{% block content %}
+    <page-shop
+        data-shop={{ data|tojson  }}
+    ></page-shop>
+{% endblock %}

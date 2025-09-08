@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Composant Service</title>
+</head>
+<body>
+
+    <service-element image="menuIMG.png" nom="Mon Service" prix="100 FCFA" description="Ceci est une description complète du produit. Elle peut contenir des informations détaillées sur les fonctionnalités, les avantages, les spécifications, etc."></service-element>
+    <service-element image="menuIMG.png" nom="Mon Service" prix="100 FCFA" description="Ceci est une description complète du produit. Elle peut contenir des informations détaillées sur les fonctionnalités, les avantages, les spécifications, etc."></service-element>
+
+
+    <script>
+        class menuElement extends HTMLElement {
+            constructor() {
+                super();
+                this.attachShadow({ mode: 'open' });
+                this.shadowRoot.innerHTML = `
+                    <style>
+                        .service-element {
+                            display: flex;
+                            flex-direction: column;
+                            align-items: center;
+                            justify-content: center;
+                            width: 100%;
+                            height: 100%;
+                            padding: 20px;
+                            cursor: pointer;
+                        }
+                        .service-title{
+                            color: #FFD700;
+                        }
+
+                        /* Styles pour le popup */
+                        .popup {
+                            position: fixed;
+                            top: 50%;
+                            left: 50%;
+                            transform: translate(-50%, -50%);
+                            background-color: black;
+                            color: white;
+                            padding: 20px;
+                            border-radius: 5px;
+                            display: none; /* Initialement caché */
+                            z-index: 100; /* Assurez-vous qu'il est au-dessus d'autres éléments */
+                        }
+                        .popup-title {
+                            color: #FFD700;
+                            font-size: 1.5em;
+                            margin-bottom: 10px;
+                        }
+                        .close-button {
+                            position: absolute;
+                            top: 10px;
+                            right: 10px;
+                            background-color: transparent;
+                            border: none;
+                            font-size: 20px;
+                            cursor: pointer;
+                            color: white;
+                        }
+                        .popup-content {
+                            /* Styles pour le contenu du popup */
+                        }
+                    </style>
+                    <div class="service-element">
+                        <img src="" class="service-image" alt="service-image" />
+                        <div class="service-title"></div>
+                        <div class="service-description"></div>
+                        <div class="service-prix"></div>
+                    </div>
+                    <div class="popup">
+                        <button class="close-button">&times;</button>
+                        <div class="popup-title">Details Produit</div>
+                        <div class="popup-content">
+                            <!-- Contenu du popup -->
+                        </div>
+                    </div>
+                `;
+            }
+
+            connectedCallback() {
+                const image = this.getAttribute('image') || "img";
+                const nom = this.getAttribute('nom') || "nom";
+                const prix = this.getAttribute('prix') || "prix";
+
+                if (image) {
+                    this.shadowRoot.querySelector('.service-image').src = image;
+                }
+                if (nom) {
+                    this.shadowRoot.querySelector('.service-title').textContent = nom;
+                }
+                if (prix) {
+                    this.shadowRoot.querySelector('.service-description').textContent = prix;
+                }
+
+                this.shadowRoot.querySelector('.service-element').addEventListener('click', () => {
+                    // Créer une instance du composant detailProduit
+                    const detailProduit = document.createElement('detail-produit');
+                    detailProduit.setAttribute('image', this.getAttribute('image'));
+                    detailProduit.setAttribute('nom', this.getAttribute('nom'));
+                    detailProduit.setAttribute('prix', this.getAttribute('prix'));
+                    document.body.appendChild(detailProduit);
+                });
+            }
+
+        }
+
+        customElements.define('service-element',menuElement);
+
+        class detailProduit extends HTMLElement {
+            constructor() {
+                super();
+                this.attachShadow({ mode: 'open' });
+                this.shadowRoot.innerHTML = `
+                    <style>
+                        .popup {
+                            position: fixed;
+                            top: 50%;
+                            left: 50%;
+                            transform: translate(-50%, -50%);
+                            background-color: black;
+                            color: white;
+                            padding: 20px;
+                            border-radius: 5px;
+                            display: none; /* Initialement caché */
+                            z-index: 100; /* Assurez-vous qu'il est au-dessus d'autres éléments */
+                        }
+                        .popup-title {
+                            color: #FFD700; /* Couleur or */
+                            font-size: 1.5em;
+                            margin-bottom: 10px;
+                        }
+                        .close-button {
+                            position: absolute;
+                            top: 10px;
+                            right: 10px;
+                            background-color: transparent;
+                            border: none;
+                            font-size: 20px;
+                            cursor: pointer;
+                            color: white;
+                        }
+                        .popup-content {
+                            display: flex;
+                            align-items: center;
+                        }
+                        .popup-image {
+                            width: 200px;
+                            height: 200px;
+                            margin-right: 20px;
+                        }
+                        .popup-description {
+                            flex: 1;
+                        }
+                        .popup-name {
+                            font-size: 2em;
+                            font-weight: bold;
+                            margin-bottom: 10px;
+                        }
+                        .popup-price {
+                            color: #FFD700; /* Couleur or */
+                            font-size: 1.2em;
+                            margin-bottom: 10px;
+                        }
+                    </style>
+                    <div class="popup">
+                        <button class="close-button">&times;</button>
+                        <div class="popup-title">Details Produit</div>
+                        <div class="popup-content">
+                            <div class="popup-image">
+                                <img src="${this.getAttribute('image')}" alt="Image du produit">
+                            </div>
+                            <div class="popup-description">
+                                <div class="popup-name">${this.getAttribute('nom')}</div>
+                                <div class="popup-price">${this.getAttribute('prix')}</div>
+                                <p>${this.getAttribute('description')}</p>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+
+            connectedCallback() {
+                this.shadowRoot.querySelector('.close-button').addEventListener('click', () => {
+                    this.remove(); // Supprimer le composant du DOM
+                });
+
+                // Affiche le popup par défaut
+                this.shadowRoot.querySelector('.popup').style.display = 'block';
+            }
+        }
+
+        customElements.define('detail-produit', detailProduit);
+    </script>
+
+</body>
+</html>
