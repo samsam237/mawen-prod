@@ -4,7 +4,7 @@ services:
   web:
     build: .
     ports:
-      - "9090:8080"
+      - "8089:8080"
     environment:
       - FLASK_ENV=production
       - STORAGE_BACKEND=${STORAGE_BACKEND:-minio}
