@@ -22,6 +22,7 @@ services:
     depends_on:
       - mawen-redis
       - mawen-minio
+      - mawen-minio-init
     networks:
       - mawen-network
     restart: unless-stopped
@@ -53,6 +54,23 @@ services:
     networks:
       - mawen-network
     restart: unless-stopped
+
+  mawen-minio-init:
+    image: minio/mc:latest
+    depends_on:
+      - mawen-minio
+    networks:
+      - mawen-network
+    entrypoint: >
+      /bin/sh -c "
+      until mc alias set local http://mawen-minio:9000 minioadmin minioadmin; do
+        echo 'Attente de MinIO...';
+        sleep 2;
+      done;
+      mc mb local/mawenhouse --ignore-existing;
+      mc anonymous set public local/mawenhouse;
+      echo 'Bucket mawenhouse créé et configuré!';
+      "
 
 volumes:
   mawen-redis-data:
